@@ -24,7 +24,7 @@ Delivering resources over a secure channel mitigates some of this risk: with
 TLS, [HSTS][], and [pinned public keys][], a user agent can be fairly certain
 that it is indeed speaking with the server it believes it's talking to. These
 mechanisms, however, authenticate _only_ the server, _not_ the content. An
-attacker (or admin!) with access to the server can manipulate content with
+attacker (or administrator) with access to the server can manipulate content with
 impunity. Ideally, authors would not only be able to pin the keys of a
 server, but also pin the _content_, ensuring that an exact representation of
 a resource, and _only_ that representation, loads and executes.
@@ -32,9 +32,9 @@ a resource, and _only_ that representation, loads and executes.
 This document specifies such a validation scheme, extending several HTML
 elements with an `integrity` attribute that contains a cryptographic hash of
 the representation of the resource the author expects to load. For instance,
-an author may wish to load jQuery from a shared server rather than hosting it
+an author may wish to load some framework from a shared server rather than hosting it
 on their own origin. Specifying that the _expected_ SHA-256 hash of
-`https://code.jquery.com/jquery-1.10.2.min.js`
+`https://example.com/example-framework.js`
 is `C6CB9UYIS9UJeqinPHWTHVqh/E1uhG5Twh+Y5qFQmYg=` means
 that the user agent can verify that the data it loads from that URL matches
 that expected hash before executing the JavaScript it contains. This
@@ -44,8 +44,9 @@ substitute malicious content.
 This example can be communicated to a user agent by adding the hash to a
 `script` element, like so:
 
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"
-            integrity="sha256-C6CB9UYIS9UJeqinPHWTHVqh/E1uhG5Twh+Y5qFQmYg=">
+    <script src="https://example.com/example-framework.js"
+            integrity="sha256-C6CB9UYIS9UJeqinPHWTHVqh/E1uhG5Twh+Y5qFQmYg="
+            crossorigin="anonymous"></script>
 
 {:.example.highlight}
 
@@ -78,35 +79,31 @@ and future versions of the specification are likely to expand this coverage.
 #### Resource Integrity
 
 *   An author wishes to use a content delivery network to improve performance
-    for her globally-distributed users. She wishes to ensure, however, that
-    the CDN's servers deliver _only_ the code she expects them to deliver. She
-    can mitigate the risk that CDN compromise (or unexpectedly malicious
-    behavior) would change her code in unfortunate ways by adding
-    [integrity metadata][] to the `link` element included on her page:
+    for globally-distributed users. It is important, however, to ensure that
+    the CDN's servers deliver _only_ the code the author expects them to
+    deliver. To mitigate the risk that a CDN compromise (or unexpectedly malicious
+    behavior) would change that site in unfortunate ways, the following
+    [integrity metadata][] is added to the `link` element included on the page:
 
         <link rel="stylesheet" href="https://site53.cdn.net/style.css"
-              integrity="sha256-SDfwewFAE...wefjijfE">
+              integrity="sha256-SDfwewFAE...wefjijfE"
+              crossorigin="anonymous">
     {:.example.highlight}
 
 *   An author wants to include JavaScript provided by a third-party
-    analytics service on her site. She wants, however, to ensure that only
-    the code she's carefully reviewed is executed. She can do so by generating
-    [integrity metadata][] for the script she's planning on including, and
-    adding it to the `script` element she includes on her page:
+    analytics service. To ensure that only the code that has been carefully
+    reviewed is executed, the author generates [integrity metadata][] for
+    the script, and adds it to the `script` element:
 
         <script src="https://analytics-r-us.com/v1.0/include.js"
-                integrity="sha256-SDfwewFAE...wefjijfE"></script>
+                integrity="sha256-SDfwewFAE...wefjijfE"
+                crossorigin="anonymous"></script>
     {:.example.highlight}
 
 *   A user agent wishes to ensure that pieces of its UI which are rendered via
-    HTML (for example, Chrome's New Tab Page) aren't manipulated before display.
+    HTML (for example, a browser's New Tab page) aren't manipulated before display.
     [Integrity metadata][] mitigates the risk that altered JavaScript will run
-    in these page's high-privilege context.
-
-*   The author of a mash-up wants to make sure her creation remains in a working
-    state. Adding [integrity metadata][] to external subresources defines an
-    expected revision of the included files.
-
+    in these pages' high-privilege contexts.
 </section><!-- Introduction::UseCases::Integrity -->
 </section><!-- /Introduction::Use Cases -->
 </section><!-- /Introduction -->
@@ -129,16 +126,14 @@ executing a cryptographic hash function on an arbitrary block of data.
 The term <dfn>origin</dfn> is defined in the Origin specification.
 [[!RFC6454]]
 
-The terms <dfn>privileged document</dfn>, <dfn>unprivileged document</dfn>, and
-<dfn>privileged context</dfn> are defined in [section 2 of the Privileged
-Contexts][privcontext] specification. An example of a privileged document is a
-document loaded over HTTPS. An example of an unprivileged document and an
-unprivileged context are a document loaded over HTTP.
+The terms <dfn>secure document</dfn> and
+<dfn>secure context</dfn> are defined in [section 2 of the Secure
+Contexts][securecontext] specification. An example of a secure document is a
+document loaded over HTTPS. A counterexample is a document loaded over HTTP.
 
-[privcontext]: https://w3c.github.io/webappsec/specs/powerfulfeatures/#terms
-[privileged document]: #dfn-privileged-document
-[unprivileged document]: #dfn-unprivileged-document
-[unprivileged context]: #dfn-unprivileged-context
+[securecontext]: https://w3c.github.io/webappsec/specs/powerfulfeatures/#terms
+[secure context]: #dfn-secure-context
+[secure document]: #dfn-secure-document
 
 A <dfn>potentially secure origin</dfn> is defined in [section 2 of the Mixed
 Content][mixedcontent] specification. An example of a potentially secure origin
@@ -167,10 +162,10 @@ specified in RFC 5234. [[!ABNF]]
 
 The <dfn>SHA-256</dfn>, <dfn>SHA-384</dfn>, and <dfn>SHA-512</dfn> are part
 of the <dfn>SHA-2</dfn> set of cryptographic hash functions defined by the
-NIST in ["Descriptions of SHA-256, SHA-384, and SHA-512"][sha].
+NIST in ["FIPS PUB 180-4: Secure Hash Standard (SHS)"][shs].
 
 [abnf-b1]: http://tools.ietf.org/html/rfc5234#appendix-B.1
-[sha]: http://csrc.nist.gov/groups/STM/cavp/documents/shs/sha256-384-512.pdf
+[shs]: http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf
 </section>
 </section>
 
@@ -190,9 +185,15 @@ metadata</dfn>, which consists of the following pieces of information:
 
 * cryptographic hash function ("alg")
 * [digest][] ("val")
+* options ("opt")
 
 The hash function and digest MUST be provided in order to validate a
 resource's integrity.
+
+<div class="note">
+At the moment, no options are defined. However, future versions of
+the spec may define options, such as MIME types [[!MIMETYPE]].
+</div>
 
 This metadata MUST be encoded in the same format as the `hash-source`
 in [section 4.2 of the Content Security Policy Level 2 specification][csp2-section42].
@@ -234,7 +235,7 @@ resource's [integrity metadata][], and MAY support additional hash functions.
 Multiple sets of [integrity metadata][] may be associated with a single
 resource in order to provide agility in the face of future discoveries.
 For example, the "Hello, world." resource described above may be described
-either of the following hash expressions:
+by either of the following hash expressions:
 
     sha256-+MO/YqmqPm/BYZwlDkir51GTc9Pt9BvmLrXcRRma8u8=
     sha512-rQw3wx1psxXzqB8TyM3nAQlK2RcluhsNwxmcqXE2YbgoDW735o8TPmIR4uWpoxUERddvFwjgRSGw7gNPCwuvJg==
@@ -244,8 +245,8 @@ Authors may choose to specify both, for example:
 
     <script src="hello_world.js"
        integrity="sha256-+MO/YqmqPm/BYZwlDkir51GTc9Pt9BvmLrXcRRma8u8=
-                  sha512-rQw3wx1psxXzqB8TyM3nAQlK2RcluhsNwxmcqXE2YbgoDW735o8TPmIR4uWpoxUERddvFwjgRSGw7gNPCwuvJg==
-        "></script>
+                  sha512-rQw3wx1psxXzqB8TyM3nAQlK2RcluhsNwxmcqXE2YbgoDW735o8TPmIR4uWpoxUERddvFwjgRSGw7gNPCwuvJg=="
+       crossorigin="anonymous"></script>
 
 In this case, the user agent will choose the strongest hash function in the
 list, and use that metadata to validate the resource (as described below in
@@ -271,7 +272,7 @@ hash functions and return the empty string if the priority is equal. That is, if
 a user agent implemented a function like <dfn>getPrioritizedHashFunction(a,
 b)</dfn> it would return the hash function the user agent considers the most
 collision-resistant.  For example, `getPrioritizedHashFunction('SHA-256',
-'SHA-512')` would return `SHA-512` and `getPrioritizedHashFunction('SHA-256',
+'SHA-512')` would return `'SHA-512'` and `getPrioritizedHashFunction('SHA-256',
 'SHA-256')` would return the empty string.
 
 </section><!-- /Framework::Cryptographic hash functions::Priority -->
@@ -286,7 +287,7 @@ collision-resistant.  For example, `getPrioritizedHashFunction('SHA-256',
 
 1.  Let <var>result</var> be the result of [applying <var>algorithm</var>][apply-algorithm]
     to the [representation data][representationdata] without any content-codings
-    applied, except when the user agent intends to consumes the content with
+    applied, except when the user agent intends to consume the content with
     content-encodings applied. In the latter case, let <var>result</var> be
     the result of applying <var>algorithm</var> to the [representation data][representationdata].
 2.  Let <var>encodedResult</var> be result of base64-encoding
@@ -304,26 +305,26 @@ brute-forcing values via integrity checks, resources are only eligible for such
 checks if they are same-origin or are the result of explicit access granted to
 the loading origin via CORS. [[!CORS]]
 
-As noted in [RFC6454, section 4](uri-origin), some user agents use
+As noted in [RFC6454, section 4][uri-origin], some user agents use
 globally unique identifiers for each file URI. This means that
 resources accessed over a `file` scheme URL are unlikely to be
 eligible for integrity checks.
 {:.note}
 
-One should note that being a [privileged document][] (e.g. a document delivered
+One should note that being a [secure document][] (e.g. a document delivered
 over HTTPS) is not necessary for the use of integrity validation. Because
 resource integrity is only an application level security tool, and it does not
-change the security state of the user agent, a privileged document is
-unnecessary. However, if integrity is used in an [unprivileged document][] (e.g.
+change the security state of the user agent, a [secure document] is
+unnecessary. However, if integrity is used in other than a [secure document][] (e.g.
 a document delivered over HTTP), authors should be aware that the integrity
 provides <em>no security guarantees at all</em>. For this reason, authors should
 only deliver integrity metadata on a [potentially secure origin][].  See
-[Unprivileged contexts remain unprivileged][] for more discussion.
+[Non-secure contexts remain non-secure][] for more discussion.
 
 {:.note}
 
 [uri-origin]: http://tools.ietf.org/html/rfc6454#section-4
-[Unprivileged contexts remain unprivileged]: #unprivileged-contexts-remain-unprivileged-1
+[Non-secure contexts remain non-secure]: #non-secure-contexts-remain-non-secure-1
 
 
 Certain HTTP headers can also change the way the resource behaves in
@@ -335,10 +336,6 @@ contains these headers, it is ineligible for integrity validation:
 *   `Refresh` can cause IFrame contents to transparently redirect to an
     unintended target, bypassing the integrity check.
 
-Consider the impact of other headers: `Content-Length`, `Content-Range`,
-etc. Is there danger there?
-{:.issue data-number="3"}
-  
 The following algorithm details these restrictions:
 
 1.  Let <var>request</var> be the request that fetched
@@ -433,7 +430,8 @@ functions. For example, a developer might write a `script` element such as:
 
     <script src="https://foobar.com/content-changes.js"
             integrity="sha256-C6CB9UYIS9UJeqinPHWTHVqh/E1uhG5Twh+Y5qFQmYg=
-                       sha256-qznLcsROx4GACP2dm0UCKCzCG+HiZ1guq6ZZDob/Tng=">
+                       sha256-qznLcsROx4GACP2dm0UCKCzCG+HiZ1guq6ZZDob/Tng="
+            crossorigin="anonymous"></script>
 
 which would allow the user agent to accept two different content payloads, one
 of which matches the first SHA256 hash value and the other matches the second
@@ -522,7 +520,7 @@ A corresponding `integrity` IDL attribute which [reflects][reflect] the
 value each element's `integrity` content attribute is added to the
 `HTMLLinkElement` and `HTMLScriptElement` interfaces.
 
-A future revision of this specification is likely to include SRI support
+A future revision of this specification is likely to include integrity support
 for all possible subresources, i.e., `a`, `audio`, `embed`, `iframe`, `img`,
 `link`, `object`, `script`, `source`, `track`, and `video` elements.
 {:.note}
@@ -552,10 +550,8 @@ The `integrity` IDL attribute must [reflect][] the `integrity` content attribute
 `option-expression`s are associated on a per `hash-expression` basis and are
 applied only to the `hash-expression` that immediately precedes it.
 
-<div class="note">
-At the moment, no `option-expression`s are defined. However, future versions of
-the spec may define options, such as MIME types [[!MIMETYPE]].
-</div>
+In order for user agents to remain fully forwards compatible with future
+options, the user agent MUST ignore all unrecognized  `option-expression`s
 
 [reflect]: http://www.w3.org/TR/html5/infrastructure.html#reflect
 </section><!-- /Framework::HTML::integrity -->
@@ -613,9 +609,7 @@ the element:
 1.  If the response's integrity state is `corrupt`:
     1.  Abort the `load` event, and treat the resource as having failed
         to load.
-    2.  If <var>resource</var> is [same origin][] with the origin of
-        the `link` element's Document, then [queue a task][] to
-        [fire a simple event][] named `error` at the `link` element.
+    2.  [Fire a simple event][] named `error` at the `link` element.
 
 [obtain a resource]: http://www.w3.org/TR/html5/document-metadata.html#concept-link-obtain
 [same origin]: http://tools.ietf.org/html/rfc6454#section-5
@@ -635,33 +629,18 @@ Insert the following steps after step 5 of step 14 of HTML5's
 
 8.  Once the [fetching algorithm][] has completed:
     2.  If the response's integrity state is `corrupt`:
-        1.  If <var>resource</var> is [same origin][] with the `script`
-            element's Document's origin, then [queue a task][] to
-            [fire a simple event][] named `error` at the element, and
-            abort these steps.
+        1.  [Fire a simple event][] named `error` at the `script`
+            element, and abort these steps.
 {:start="6"}
 
 [prepare]: http://www.w3.org/TR/html5/scripting-1.html#prepare-a-script
 [fetching algorithm]: http://www.w3.org/TR/html5/infrastructure.html#fetch
 [queue a task]: http://www.w3.org/TR/html5/webappapis.html#queue-a-task
-[fire a simple event]: http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event
+[Fire a simple event]: http://www.w3.org/TR/html5/webappapis.html#fire-a-simple-event
 [bz]: http://lists.w3.org/Archives/Public/public-webappsec/2013Dec/0048.html
 </section><!-- /Framework::HTML::Elements::script -->
 
 </section><!-- /Framework::HTML::Elements -->
-
-<section>
-### Verification of CSS-loaded subresources
-
-Tab and Anne are poking at adding `fetch()` to some spec somewhere
-which would allow CSS files to specify various arguments to the fetch
-algorithm while requesting resources. Detail on the proposal is at
-<https://lists.w3.org/Archives/Public/public-webappsec/2014Jan/0129.html>.
-Once that is specified, we can proceed defining an `integrity` argument
-that would allow integrity checks in CSS.
-{:.issue data-number="13"}
-
-</section><!-- /Framework::CSS -->
 
 </section><!-- /Framework -->
 
@@ -681,10 +660,6 @@ support this latter option, user agents MUST send a
 associated integrity metadata (see item 3 in the "[Modifications to
 Fetch][]" section).
 
-Think about how integrity checks would effect `vary` headers
-in general.
-{:.issue data-number="17"}
-
 [cachecontrol]: http://tools.ietf.org/html/rfc7234#section-5.2
 [notransform]: http://tools.ietf.org/html/rfc7234#section-5.2.1.6
 [Modifications to Fetch]: #modifications-to-fetch
@@ -694,14 +669,14 @@ in general.
 ## Security Considerations
 
 <section>
-### Unprivileged contexts remain unprivileged
+### Non-secure contexts remain non-secure
 
-[Integrity metadata][] delivered to an [unprivileged context], such as an
-[unprivileged document][], only protects an origin against a compromise of the
+[Integrity metadata][] delivered to a context that is not a [secure context],
+such as an only protects an origin against a compromise of the
 server where an external resources is hosted. Network attackers can alter the
 digest in-flight (or remove it entirely, or do absolutely anything else to the
 document), just as they could alter the resource the hash is meant to validate.
-Thus, authors SHOULD deliver integrity metadata only to a [privileged
+Thus, authors SHOULD deliver integrity metadata only to a [secure
 document][]. See also [securing the web][].
 
 [Securing the Web]: https://w3ctag.github.io/web-https/
@@ -714,7 +689,7 @@ Digests are only as strong as the hash function used to generate them. User
 agents SHOULD refuse to support known-weak hashing functions like MD5 or SHA-1,
 and SHOULD restrict supported hashing functions to those known to be
 collision-resistant. At the time of writing, SHA-256 is a good baseline.
-Moreover, user agents SHOULD reevaluate their supported hashing functions
+Moreover, user agents SHOULD re-evaluate their supported hash functions
 on a regular basis, and deprecate support for those functions shown to be
 insecure.
 </section><!-- /Security::Hash collision -->
@@ -724,7 +699,7 @@ insecure.
 
 Attackers can determine whether some cross-origin resource has certain
 content by attempting to load it with a known digest, and watching for
-load failure. If the load fails, the attacker can surmise that the
+load failures. If the load fails, the attacker can surmise that the
 resource didn't match the hash, and thereby gain some insight into its
 contents. This might reveal, for example, whether or not a user is
 logged into a particular service.
@@ -740,8 +715,8 @@ common usernames, and specify those hashes while repeatedly attempting
 to load the document.
 
 User agents SHOULD mitigate the risk by refusing to fire `error` events
-on elements which loaded cross-origin resources, but some side-channels
-will likely be difficult to avoid.
+on elements which loaded non-CORS cross-origin resources, but
+some side-channels will likely be difficult to avoid.
 </section><!-- /Security::cross-origin -->
 
 </section><!-- /Security -->
@@ -749,12 +724,12 @@ will likely be difficult to avoid.
 <section>
 ## Acknowledgements
 
-None of this is new. Much of the content here is inspired heavily by Gervase
+Much of the content here is inspired heavily by Gervase
 Markham's [Link Fingerprints][] concept, as well as WHATWG's [Link Hashes][].
 
 A special thanks to Mike West of Google, Inc. for his invaluable contributions
 to the initial version of this spec.
 
 [Link Fingerprints]: http://www.gerv.net/security/link-fingerprints/
-[Link Hashes]: http://wiki.whatwg.org/wiki/Link_Hashes
+[Link Hashes]: https://wiki.whatwg.org/wiki/Link_Hashes
 </section>

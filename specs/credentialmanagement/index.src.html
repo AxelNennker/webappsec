@@ -220,7 +220,7 @@ spec: URL; urlPrefix: http://www.w3.org/TR/url/
         [[#user-mediated-selection]] for discussion.
       </li>
       <li>
-        Finally, changing passwords is less well-suppported than it could be if
+        Finally, changing passwords is less well-supported than it could be if
         the website explicitly informed the user agent that credentials had
         changed.
       </li>
@@ -278,7 +278,7 @@ spec: URL; urlPrefix: http://www.w3.org/TR/url/
               if (!credential)
                 return;
 
-              if (credential.type == "FederatedCredential") {
+              if (credential.type == "federated") {
                 switch (credential.<a idl for="FederatedCredential">provider</a>) {
                 case "https://www.facebook.com/":
                   // Use Facebook's SDK, a la https://developers.facebook.com/docs/facebook-login/login-flow-for-web/#logindialog
@@ -459,8 +459,9 @@ spec: URL; urlPrefix: http://www.w3.org/TR/url/
     <dd>
       A <strong>federated identity provider</strong> is an entity which a
       website trusts to correctly authenticate a user, and which provides an
-      API for that purpose. OAuth2 [[RFC6749]] is an example of such an API,
-      used by a number of providers.
+      API for that purpose. <a href="http://openid.net/developers/specs/">OpenID
+      Connect</a> is an example of such a framework, used by a number of
+      providers.
     </dd>
   </dl>
 </section>
@@ -497,7 +498,6 @@ spec: URL; urlPrefix: http://www.w3.org/TR/url/
       USVString iconURL;
     };
 
-    [NoInterfaceObject]
     interface Credential {
       readonly attribute DOMString id;
       readonly attribute DOMString type;
@@ -536,12 +536,10 @@ spec: URL; urlPrefix: http://www.w3.org/TR/url/
   ISSUE(w3c/webappsec#287): Define cloning algorithms.
 
   <pre class="idl">
-    [NoInterfaceObject]
-    interface LocallyStoredCredential {
+    interface LocallyStoredCredential : Credential {
       readonly attribute DOMString name;
       readonly attribute USVString iconURL;
     };
-    LocallyStoredCredential implements Credential;
   </pre>
   <dl dfn-for="LocallyStoredCredential">
     <dt><dfn attribute>name</dfn></dt>
@@ -579,10 +577,9 @@ spec: URL; urlPrefix: http://www.w3.org/TR/url/
     };
 
     [Constructor(PasswordCredentialData data), Exposed=Window]
-    interface PasswordCredential {
+    interface PasswordCredential : LocallyStoredCredential {
       Promise&lt;Response&gt; send(USVString url);
     };
-    PasswordCredential implements LocallyStoredCredential;
   </pre>
   <dl dfn-for="PasswordCredential">
     <dt><dfn method lt="send(url)">send(url)</dfn></dt>
@@ -627,11 +624,10 @@ spec: URL; urlPrefix: http://www.w3.org/TR/url/
     };
 
     [Constructor(FederatedCredentialData data), Exposed=Window]
-    interface FederatedCredential {
+    interface FederatedCredential : LocallyStoredCredential {
       readonly attribute USVString provider;
       readonly attribute DOMString? protocol;
     };
-    FederatedCredential implements LocallyStoredCredential;
   </pre>
   <dl dfn-for="FederatedCredential">
     <dt><dfn attribute>provider</dfn></dt>
@@ -1263,8 +1259,8 @@ spec: URL; urlPrefix: http://www.w3.org/TR/url/
     <li>
       Execute the initial value of {{FormData/append()}} on <var>init</var>'s
       <code>body</code> member, with a <code>name</code> of
-      "<code>username</code>", and a <code>value</code> of
-      <var>credential</var>'s {{[[password]]}} slot.
+      "<code>id</code>", and a <code>value</code> of
+      <var>credential</var>'s {{Credential/id}}.
     </li>
     <li>
       Execute the initial value of {{FormData/append()}} on <var>init</var>'s
@@ -1277,6 +1273,10 @@ spec: URL; urlPrefix: http://www.w3.org/TR/url/
       {{fetch()}} on <var>url</var> and <var>init</var>.
     </li>
   </ol>
+
+  ISSUE(w3c/webappsec#241): The "id" and "password" names need to be
+  configurable. This is wrapped up in the general question of how to present
+  the functionality: via <code>fetch()</code>, or <code>send()</code>.
 
   <h4 id="store-locallystoredcredential">
     Store <code>LocallyStoredCredential</code>
@@ -1299,8 +1299,8 @@ spec: URL; urlPrefix: http://www.w3.org/TR/url/
       {{LocallyStoredCredential/iconURL}} to the empty string.
     </li>
     <li>
-      Switch on <var>credential</var>'s interface, and execute the associated
-      steps:
+      Switch on <var>credential</var>'s primary interface, and execute the
+      associated steps:
 
       <dl>
         <dt>{{PasswordCredential}}</dt>
@@ -1491,7 +1491,7 @@ spec: URL; urlPrefix: http://www.w3.org/TR/url/
   {{Credential}} objects from that origin MAY be provided to pages from that
   origin without user interaction. The user will be signed-in to that origin
   persistently, which, on the one hand, is desirable from the perspective of
-  usability and convinience, but which might nevertheless surprise the user.
+  usability and convenience, but which might nevertheless surprise the user.
 
   If the user agent syncs the state of a {{Credential}} between devices, an
   origin could explicitly tie the devices together in a way which might surprise
@@ -1778,7 +1778,7 @@ spec: URL; urlPrefix: http://www.w3.org/TR/url/
   {{store()}} to steal a user's credentials as they're written into the
   <a>credential store</a>.
 
-  Authors SHOULD mititgate the risk of such attacks by properly escaping input
+  Authors SHOULD mitigate the risk of such attacks by properly escaping input
   and output, and add layers of defense in depth by setting a reasonably
   strong Content Security Policy [[CSP2]] which restricts the origins from
   which script can be injected, and by using Subresource Integrity checks

@@ -5,7 +5,7 @@
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
   
   
-  <title>Privileged Contexts</title>
+  <title>Secure Contexts</title>
   
   
   <link href="../default.css" rel="stylesheet" type="text/css">
@@ -68,10 +68,10 @@
 </a>
 </p>
   
-   <h1 class="p-name no-ref" id="title">Privileged Contexts</h1>
+   <h1 class="p-name no-ref" id="title">Secure Contexts</h1>
   
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft
-    <time class="dt-updated" datetime="2015-04-24">24 April 2015</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft,
+    <time class="dt-updated" datetime="2015-05-07">7 May 2015</time></span></h2>
   
    <div data-fill-with="spec-metadata">
     <dl>
@@ -91,7 +91,7 @@
      <dd class="editor p-author h-card vcard" data-editor-id="56384"><a class="p-name fn u-email email" href="mailto:mkwst@google.com">Mike West</a> (<span class="p-org org">Google Inc.</span>)
      <dd class="editor p-author h-card vcard" data-editor-id="75060"><a class="p-name fn u-email email" href="mailto:yzhu@yahoo-inc.com">Yan Zhu</a> (<span class="p-org org">Yahoo! Inc.</span>)
      <dt>Bug Reports:
-     <dd><span><a href="https://github.com/w3c/webappsec/issues/new?title=PRIVILEGE:%20">via the w3c/webappsec repository on GitHub</a></span>
+     <dd><span><a href="https://github.com/w3c/webappsec/issues/new?title=SECURE:%20">via the w3c/webappsec repository on GitHub</a></span>
     </dl>
    </div>
   
@@ -170,15 +170,16 @@ exposed to the web only within a trustworthy environment.</p>
    <ul class="toc" role="directory">
     <li><a href="#intro"><span class="secno">1</span> <span class="content">Introduction</span></a>
     <li><a href="#terms"><span class="secno">2</span> <span class="content">Key Concepts and Terminology</span></a>
-    <li><a href="#feature-requires-privilege"><span class="secno">3</span> <span class="content">
-    Should <var>[insert feature here]</var> require a privileged context?
+    <li><a href="#threat-models-risks"><span class="secno">3</span> <span class="content">
+      Threat models and risks
   </span></a>
      <ul class="toc">
       <li><a href="#threat-models"><span class="secno">3.1</span> <span class="content">Threat Models</span></a>
        <ul class="toc">
-        <li><a href="#thread-passive"><span class="secno">3.1.1</span> <span class="content">Passive Network Attacker</span></a>
+        <li><a href="#threat-passive"><span class="secno">3.1.1</span> <span class="content">Passive Network Attacker</span></a>
         <li><a href="#threat-active"><span class="secno">3.1.2</span> <span class="content">Active Network Attacker</span></a>
        </ul>
+      <li><a href="#threat-risks"><span class="secno">3.2</span> <span class="content">Risks associated with insecure contexts</span></a>
      </ul>
     <li><a href="#restrictions"><span class="secno">4</span> <span class="content">Restricting Features</span></a>
      <ul class="toc">
@@ -190,8 +191,8 @@ exposed to the web only within a trustworthy environment.</p>
      </ul>
     <li><a href="#algorithms"><span class="secno">5</span> <span class="content">Algorithms</span></a>
      <ul class="toc">
-      <li><a href="#settings-privileged"><span class="secno">5.1</span> <span class="content">
-      Is <var>settings object</var> a privileged context?
+      <li><a href="#settings-secure"><span class="secno">5.1</span> <span class="content">
+      Is <var>settings object</var> a secure context?
     </span></a>
       <li><a href="#is-origin-trustworthy"><span class="secno">5.2</span> <span class="content">
       Is <var>origin</var> potentially trustworthy?
@@ -260,37 +261,37 @@ exposed to the web only within a trustworthy environment.</p>
   
     <dl>
     
-     <dt><dfn data-dfn-type="dfn" data-export="" id="privileged-context">
-      privileged context
-    <a class="self-link" href="#privileged-context"></a></dfn>
+     <dt><dfn data-dfn-type="dfn" data-export="" id="secure-context">
+      secure context
+    <a class="self-link" href="#secure-context"></a></dfn>
      
     
      <dd>
-      A <a data-link-type="dfn" href="http://www.w3.org/TR/html5/webappapis.html#settings-object">settings object</a> is considered a <strong>privileged
-      context</strong> if the algorithm defined in <a href="#settings-privileged">§5.1 
-      Is settings object a privileged context?
+      A <a data-link-type="dfn" href="http://www.w3.org/TR/html5/webappapis.html#settings-object">settings object</a> is considered a <strong>secure
+      context</strong> if the algorithm defined in <a href="#settings-secure">§5.1 
+      Is settings object a secure context?
     </a>
-      returns <code>Privileged</code> when executed upon it. Moreover:
+      returns <code>Secure</code> when executed upon it. Moreover:
 
       
       <ul>
         
        <li>
-          A <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/dom/#interface-document">Document</a></code> is considered a <dfn data-dfn-type="dfn" data-export="" id="privileged-document">privileged document<a class="self-link" href="#privileged-document"></a></dfn>
-          if the algorithm defined in <a href="#settings-privileged">§5.1 
-      Is settings object a privileged context?
+          A <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/dom/#interface-document">Document</a></code> is considered a <dfn data-dfn-type="dfn" data-export="" id="secure-document">secure document<a class="self-link" href="#secure-document"></a></dfn>
+          if the algorithm defined in <a href="#settings-secure">§5.1 
+      Is settings object a secure context?
     </a> returns
-          <code>Privileged</code> when executed upon its <a data-link-type="dfn" href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbent settings
+          <code>Secure</code> when executed upon its <a data-link-type="dfn" href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbent settings
           object</a>.
         
        
         
        <li>
           A <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/workers/#worker">Worker</a></code>, <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/workers/#sharedworker">SharedWorker</a></code>, or <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/service-workers/#service-worker-obj">ServiceWorker</a></code> is considered a
-          <dfn data-dfn-type="dfn" data-export="" id="privileged-worker">privileged worker<a class="self-link" href="#privileged-worker"></a></dfn> if the algorithm defined in
-          <a href="#settings-privileged">§5.1 
-      Is settings object a privileged context?
-    </a> returns <code>Privileged</code> when executed
+          <dfn data-dfn-type="dfn" data-export="" id="secure-worker">secure worker<a class="self-link" href="#secure-worker"></a></dfn> if the algorithm defined in
+          <a href="#settings-secure">§5.1 
+      Is settings object a secure context?
+    </a> returns <code>Secure</code> when executed
           upon its <a data-link-type="dfn" href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbent settings object</a>.
         
        
@@ -318,86 +319,12 @@ exposed to the web only within a trustworthy environment.</p>
 
    <section>
   
-    <h2 class="heading settled" data-level="3" id="feature-requires-privilege"><span class="secno">3. </span><span class="content">
-    Should <var>[insert feature here]</var> require a privileged context?
-  </span><a class="self-link" href="#feature-requires-privilege"></a></h2>
+    <h2 class="heading settled" data-level="3" id="threat-models-risks"><span class="secno">3. </span><span class="content">
+      Threat models and risks
+  </span><a class="self-link" href="#threat-models-risks"></a></h2>
 
 
     <p><em>This section is non-normative.</em></p>
-
-
-    <p>Certain web platform features that have a distinct impact on a user’s
-  security or privacy should be available for use only in <a data-link-type="dfn" href="#privileged-context">privileged
-  contexts</a>.</p>
-
-
-    <p>Broadly speaking, we consider a feature powerful enough to restrict when it
-  fits into one or more of the following categories:</p>
-
-  
-    <ol>
-    
-     <li>
-      The feature provides access to sensitive data (personally-identifying
-      information, credentials, payment instruments, and so on).
-      <a data-link-type="biblio" href="#biblio-credential-management">[CREDENTIAL-MANAGEMENT]</a> is an example of such an API.
-    
-     
-    
-     <li>
-      The feature provides access to sensor data on a user’s device (camera,
-      microphone, and GPS being particularly noteworthy, but certainly including
-      less obviously dangerous sensors like the accelerometer).
-      <a data-link-type="biblio" href="#biblio-geolocation-api">[GEOLOCATION-API]</a> and <a data-link-type="biblio" href="#biblio-mediacapture-streams">[MEDIACAPTURE-STREAMS]</a> are historical examples.
-    
-     
-    
-     <li>
-      The feature provides access to or information about other devices a user
-      has access to. <a data-link-type="biblio" href="#biblio-discovery">[DISCOVERY]</a> and <a data-link-type="biblio" href="#biblio-bluetooth">[BLUETOOTH]</a> are good examples.
-    
-     
-    
-     <li>
-      The feature exposes temporary or persistent identifiers, including
-      identifiers which reset themselves after some period of time
-      (e.g. <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/html5/webstorage.html#the-sessionstorage-attribute">sessionStorage</a></code>), identifiers the user can manually reset
-      (e.g. <a data-link-type="biblio" href="#biblio-encrypted-media">[ENCRYPTED-MEDIA]</a>, Cookies <a data-link-type="biblio" href="#biblio-rfc6265">[RFC6265]</a>, and <a data-link-type="biblio" href="#biblio-indexeddb">[IndexedDB]</a>),
-      as well as identifying hardware features the user can’t easily reset.
-    
-     
-    
-     <li>
-      The feature introduces some state for an origin which persists across
-      browsing sessions. <a data-link-type="biblio" href="#biblio-service-workers">[SERVICE-WORKERS]</a> is a great example.
-    
-     
-    
-     <li>
-      The feature manipulates a user agent’s native UI in some way which
-      removes, obscures, or manipulates details relevant to a user’s
-      understanding of her context. <a data-link-type="biblio" href="#biblio-fullscreen">[FULLSCREEN]</a>, for instance.
-    
-     
-    
-     <li>
-      The feature introduces some functionality for which user permission will
-      be required.
-    
-     
-  
-    </ol>
-
-
-    <p>This list is non-exhaustive, but should give you a feel for the types of
-  features we should be concerned about when writing or implementing
-  specifications.</p>
-
-
-    <p class="note" role="note">Note: While restricting the feature itself to <a data-link-type="dfn" href="#privileged-context">privileged contexts</a> is
-  critical, we ought not forget that facilities that carry such information
-  (such as new network access mechanisms, or other generic functions with access
-  to network data) are equally sensitive.</p>
 
   
     <h3 class="heading settled" data-level="3.1" id="threat-models"><span class="secno">3.1. </span><span class="content">Threat Models</span><a class="self-link" href="#threat-models"></a></h3>
@@ -410,7 +337,7 @@ exposed to the web only within a trustworthy environment.</p>
   passive and active.</p>
 
   
-    <h4 class="heading settled" data-level="3.1.1" id="thread-passive"><span class="secno">3.1.1. </span><span class="content">Passive Network Attacker</span><a class="self-link" href="#thread-passive"></a></h4>
+    <h4 class="heading settled" data-level="3.1.1" id="threat-passive"><span class="secno">3.1.1. </span><span class="content">Passive Network Attacker</span><a class="self-link" href="#threat-passive"></a></h4>
 
 
     <p>A "Passive Network Attacker" is a party who is able to observe traffic
@@ -439,6 +366,82 @@ exposed to the web only within a trustworthy environment.</p>
   recent examples), to parties with direct intent to compromise security or
   privacy who are able to target individual users, organizations or even
   entire populations.</p>
+
+  
+    <h3 class="heading settled" data-level="3.2" id="threat-risks"><span class="secno">3.2. </span><span class="content">Risks associated with insecure contexts</span><a class="self-link" href="#threat-risks"></a></h3>
+
+
+    <p>Certain web platform features that have a distinct impact on a user’s
+  security or privacy should be available for use only in <a data-link-type="dfn" href="#secure-context">secure
+  contexts</a> in order to defend against the threats above. Features
+  available in insecure contexts risk exposing these capabilities to
+  network attackers:</p>
+
+  
+    <ol>
+    
+     <li>
+      The ability to read and modify sensitive data (personally-identifying
+      information, credentials, payment instruments, and so on).
+      <a data-link-type="biblio" href="#biblio-credential-management">[CREDENTIAL-MANAGEMENT]</a> is an example of an API that handles sensitive
+      data.
+    
+     
+    
+     <li>
+      The ability to read and modify input from sensors on a user’s device
+      (camera, microphone, and GPS being particularly noteworthy, but
+      certainly including less obviously dangerous sensors like the
+      accelerometer). <a data-link-type="biblio" href="#biblio-geolocation-api">[GEOLOCATION-API]</a> and <a data-link-type="biblio" href="#biblio-mediacapture-streams">[MEDIACAPTURE-STREAMS]</a> are
+      historical examples of features that use sensor input.
+    
+     
+    
+     <li>
+      The ability to access information about other devices a user
+      has access to. <a data-link-type="biblio" href="#biblio-discovery">[DISCOVERY]</a> and <a data-link-type="biblio" href="#biblio-bluetooth">[BLUETOOTH]</a> are good examples.
+    
+     
+    
+     <li>
+      The ability to track users using temporary or persistent identifiers,
+      including identifiers which reset themselves after some period of time
+      (e.g. <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/html5/webstorage.html#the-sessionstorage-attribute">sessionStorage</a></code>), identifiers the user can manually reset
+      (e.g. <a data-link-type="biblio" href="#biblio-encrypted-media">[ENCRYPTED-MEDIA]</a>, Cookies <a data-link-type="biblio" href="#biblio-rfc6265">[RFC6265]</a>, and <a data-link-type="biblio" href="#biblio-indexeddb">[IndexedDB]</a>),
+      as well as identifying hardware features the user can’t easily reset.
+    
+     
+    
+     <li>
+      The ability to introduce some state for an origin which persists across
+      browsing sessions. <a data-link-type="biblio" href="#biblio-service-workers">[SERVICE-WORKERS]</a> is a great example.
+    
+     
+    
+     <li>
+      The ability to manipulate a user agent’s native UI in some way which
+      removes, obscures, or manipulates details relevant to a user’s
+      understanding of her context. <a data-link-type="biblio" href="#biblio-fullscreen">[FULLSCREEN]</a>, for instance.
+    
+     
+    
+     <li>
+      The ability to introduce some functionality for which user permission will
+      be required.
+    
+     
+  
+    </ol>
+
+
+    <p>This list is non-exhaustive, but should give you a feel for the types of
+  risks we should consider when writing or implementing specifications.</p>
+
+
+    <p class="note" role="note">Note: While restricting a feature itself to <a data-link-type="dfn" href="#secure-context">secure contexts</a> is
+  critical, we ought not forget that facilities that carry such information
+  (such as new network access mechanisms, or other generic functions with access
+  to network data) are equally sensitive.</p>
 </section>
 
 
@@ -452,18 +455,18 @@ exposed to the web only within a trustworthy environment.</p>
 
     <p>When writing a specification for new features, we recommend that authors
   and editors guard sensitive APIs with checks against
-  <a href="#settings-privileged">§5.1 
-      Is settings object a privileged context?
+  <a href="#settings-secure">§5.1 
+      Is settings object a secure context?
     </a>. For example, something like the following
   would be a good approach:</p>
 
   
-    <div class="example" id="example-c817f858"><a class="self-link" href="#example-c817f858"></a>
+    <div class="example" id="example-8ce7bce2"><a class="self-link" href="#example-8ce7bce2"></a>
     
      <ol>
       
       <li>
-        If the <a data-link-type="dfn" href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbent settings object</a> is not a <a data-link-type="dfn" href="#privileged-context">privileged
+        If the <a data-link-type="dfn" href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbent settings object</a> is not a <a data-link-type="dfn" href="#secure-context">secure
         context</a>, then [<i>insert something appropriate here: perhaps you
         could reject a Promise with a <code>SecurityError</code>, call an error
         callback, deny a permission request, etc.</i>].
@@ -487,7 +490,7 @@ exposed to the web only within a trustworthy environment.</p>
 
     <p>The list above clearly includes some existing functionality that is currently
   available to the web over insecure channels. We recommend that such legacy
-  functionality begin requiring a <a data-link-type="dfn" href="#privileged-context">privileged context</a> as quickly as is
+  functionality begin requiring a <a data-link-type="dfn" href="#secure-context">secure context</a> as quickly as is
   reasonably possible.</p>
 
   
@@ -497,13 +500,13 @@ exposed to the web only within a trustworthy environment.</p>
       If such a feature is not widely implemented, we recommend that the
       specification be immediately
       <a data-link-type="dfn" href="http://www.w3.org/2014/Process-20140801/#rec-modify">modified</a> to include a restriction
-      to <a data-link-type="dfn" href="#privileged-context">privileged contexts</a>.
+      to <a data-link-type="dfn" href="#secure-context">secure contexts</a>.
     
      
     
      <li>
       If such a feature is widely implemented, but not yet in wide use, we
-      recommend that it be quickly restricted to <a data-link-type="dfn" href="#privileged-context">privileged contexts</a> by
+      recommend that it be quickly restricted to <a data-link-type="dfn" href="#secure-context">secure contexts</a> by
       adding a check as described in <a href="#new">§4.1 New Features</a> to existing implementations, and
       <a data-link-type="dfn" href="http://www.w3.org/2014/Process-20140801/#rec-modify">modifying the specification</a>
       accordingly.
@@ -535,13 +538,13 @@ exposed to the web only within a trustworthy environment.</p>
     
      <li>
       <a data-link-type="dfn" href="http://www.w3.org/2014/Process-20140801/#rec-modify">Modify</a> the specification to include
-      checks against [[#settings-privileged] before executing the algorithms for
+      checks against [[#settings-secure] before executing the algorithms for
       <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/geolocation-API/#get-current-position">getCurrentPosition()</a></code> and <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/geolocation-API/#watch-position">watchPosition()</a></code>.
 
 
-      <p>If <a href="#settings-privileged">§5.1 
-      Is settings object a privileged context?
-    </a> returns <code>Not Privileged</code>, then
+      <p>If <a href="#settings-secure">§5.1 
+      Is settings object a secure context?
+    </a> returns <code>Not Secure</code>, then
       the algorithms should be aborted, and the <var>errorCallback</var> invoked
       with a <code>code</code> of <code>PERMISSION_DENIED</code>.</p>
       
@@ -550,7 +553,7 @@ exposed to the web only within a trustworthy environment.</p>
     
      <li>
       User agents should announce clear intentions to disable the API for
-      unprivileged contexts on a specific date, and warn developers accordingly
+      insecure contexts on a specific date, and warn developers accordingly
       (via console messages, for example).
     
      
@@ -597,15 +600,15 @@ exposed to the web only within a trustworthy environment.</p>
   
     <section>
     
-     <h3 class="heading settled" data-level="5.1" id="settings-privileged"><span class="secno">5.1. </span><span class="content">
-      Is <var>settings object</var> a privileged context?
-    </span><a class="self-link" href="#settings-privileged"></a></h3>
+     <h3 class="heading settled" data-level="5.1" id="settings-secure"><span class="secno">5.1. </span><span class="content">
+      Is <var>settings object</var> a secure context?
+    </span><a class="self-link" href="#settings-secure"></a></h3>
      
 
 
      <p>Given a <a data-link-type="dfn" href="http://www.w3.org/TR/html5/webappapis.html#settings-object">settings object</a> <var>settings</var>, this algorithm returns
-    <code>Privileged</code> if the object represents a <a data-link-type="dfn" href="#privileged-context">privileged
-    context</a>, and <code>Not Privileged</code> otherwise.</p>
+    <code>Secure</code> if the object represents a <a data-link-type="dfn" href="#secure-context">secure
+    context</a>, and <code>Not Secure</code> otherwise.</p>
      
 
     
@@ -647,7 +650,7 @@ exposed to the web only within a trustworthy environment.</p>
       Is origin potentially trustworthy?
     </a> algorithm
             on <var>origin</var> is <strong>not</strong> <code>Potentially
-            Trustworthy</code>, return <code>Not Privileged</code>.
+            Trustworthy</code>, return <code>Not Secure</code>.
           
         
         
@@ -672,7 +675,7 @@ exposed to the web only within a trustworthy environment.</p>
        <p class="note" role="note">Note: If <var>settings</var> maps to a <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/dom/#interface-document">Document</a></code> (either directly,
         or as the <a data-link-type="dfn" href="http://www.w3.org/TR/html5/webappapis.html#responsible-document">responsible document</a> of a <code class="idl"><a data-link-type="idl" href="http://www.w3.org/TR/workers/#worker">Worker</a></code>), we’ll walk all
         the way up the document’s ancestor chain to verify that the whole chain
-        is privileged.</p>
+        is secure.</p>
        
 
         
@@ -720,7 +723,7 @@ exposed to the web only within a trustworthy environment.</p>
     </a>
                 algorithm on <var>origin</var> is <strong>not</strong>
                 <code>Potentially Trustworthy</code>, return
-                <code>Not Privileged</code>.
+                <code>Not Secure</code>.
               
           
             
@@ -735,7 +738,7 @@ exposed to the web only within a trustworthy environment.</p>
       
       
       <li>
-        Return <code>Privileged</code>
+        Return <code>Secure</code>
       
       
     
@@ -961,9 +964,9 @@ exposed to the web only within a trustworthy environment.</p>
    <li>conformant server, <a href="#conformant-server">Unnumbered section</a>
    <li>conformant user agent, <a href="#conformant-user-agent">Unnumbered section</a>
    <li>embedding document, <a href="#embedding-document">2</a>
-   <li>privileged context, <a href="#privileged-context">2</a>
-   <li>privileged document, <a href="#privileged-document">2</a>
-   <li>privileged worker, <a href="#privileged-worker">2</a></ul>
+   <li>secure context, <a href="#secure-context">2</a>
+   <li>secure document, <a href="#secure-document">2</a>
+   <li>secure worker, <a href="#secure-worker">2</a></ul>
   <h3 class="no-num heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="indexlist">
    <li><a data-link-type="biblio" href="#biblio-dom">[dom]</a> defines the following terms:
