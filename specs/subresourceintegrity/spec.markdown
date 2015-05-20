@@ -48,7 +48,7 @@ This example can be communicated to a user agent by adding the hash to a
             integrity="sha256-C6CB9UYIS9UJeqinPHWTHVqh/E1uhG5Twh+Y5qFQmYg="
             crossorigin="anonymous"></script>
 
-{:.example.highlight}
+{:.example}
 
 Scripts, of course, are not the only resource type which would benefit
 from integrity validation. The scheme specified here also applies to `link`
@@ -85,23 +85,23 @@ and future versions of the specification are likely to expand this coverage.
     behavior) would change that site in unfortunate ways, the following
     [integrity metadata][] is added to the `link` element included on the page:
 
-        <link rel="stylesheet" href="https://site53.cdn.net/style.css"
-              integrity="sha256-SDfwewFAE...wefjijfE"
+        <link rel="stylesheet" href="https://site53.example.net/style.css"
+              integrity="sha256-vjnUh7+rXHH2lg/5vDY8032ftNVCIEC21vL6szrVw9M="
               crossorigin="anonymous">
-    {:.example.highlight}
+    {:.example}
 
 *   An author wants to include JavaScript provided by a third-party
     analytics service. To ensure that only the code that has been carefully
     reviewed is executed, the author generates [integrity metadata][] for
     the script, and adds it to the `script` element:
 
-        <script src="https://analytics-r-us.com/v1.0/include.js"
-                integrity="sha256-SDfwewFAE...wefjijfE"
+        <script src="https://analytics-r-us.example.com/v1.0/include.js"
+                integrity="sha256-Rj/9XDU7F6pNSX8yBddiCIIS+XKDTtdq0//No0MH0AE="
                 crossorigin="anonymous"></script>
-    {:.example.highlight}
+    {:.example}
 
-*   A user agent wishes to ensure that pieces of its UI which are rendered via
-    HTML (for example, a browser's New Tab page) aren't manipulated before display.
+*   A user agent wishes to ensure that JavaScript code running in high-privilege HTML 
+    contexts (for example, a browser's New Tab page) aren't manipulated before display.
     [Integrity metadata][] mitigates the risk that altered JavaScript will run
     in these pages' high-privilege contexts.
 </section><!-- Introduction::UseCases::Integrity -->
@@ -157,16 +157,26 @@ A <dfn>base64 encoding</dfn> is defined in [RFC 4648, section 4][base64].
 
 [base64]: http://tools.ietf.org/html/rfc4648#section-4
 
-The Augmented Backus-Naur Form (ABNF) notation used in this document is
-specified in RFC 5234. [[!ABNF]]
-
 The <dfn>SHA-256</dfn>, <dfn>SHA-384</dfn>, and <dfn>SHA-512</dfn> are part
 of the <dfn>SHA-2</dfn> set of cryptographic hash functions defined by the
 NIST in ["FIPS PUB 180-4: Secure Hash Standard (SHS)"][shs].
 
-[abnf-b1]: http://tools.ietf.org/html/rfc5234#appendix-B.1
 [shs]: http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf
 </section>
+
+<section>
+### Grammatical Concepts
+
+The Augmented Backus-Naur Form (ABNF) notation used in this document is
+specified in RFC5234. [[!ABNF]]
+
+The following core rules are included by reference, as defined in
+[Appendix B.1][abnf-b1] of [[!ABNF]]: <code><dfn>WSP</dfn></code> (white space)
+and <code><dfn>VCHAR</dfn></code> (printing characters).
+
+[abnf-b1]: https://tools.ietf.org/html/rfc5234#appendix-B.1
+</section>
+
 </section>
 
 <section>
@@ -198,13 +208,13 @@ the spec may define options, such as MIME types [[!MIMETYPE]].
 This metadata MUST be encoded in the same format as the `hash-source`
 in [section 4.2 of the Content Security Policy Level 2 specification][csp2-section42].
 
-For example, given a script resource containing only the string "alert('Hello, world.');",
+For example, given a script resource containing only the string \"alert(\'Hello, world.\');\",
 an author might choose [SHA-256][sha2] as a hash function.
 `qznLcsROx4GACP2dm0UCKCzCG+HiZ1guq6ZZDob/Tng=` is the base64-encoded
 digest that results. This can be encoded as follows:
 
     sha256-qznLcsROx4GACP2dm0UCKCzCG+HiZ1guq6ZZDob/Tng=
-{:.example.highlight}
+{:.example}
 
 <div class="note">
 Digests may be generated using any number of utilities. [OpenSSL][], for
@@ -239,7 +249,7 @@ by either of the following hash expressions:
 
     sha256-+MO/YqmqPm/BYZwlDkir51GTc9Pt9BvmLrXcRRma8u8=
     sha512-rQw3wx1psxXzqB8TyM3nAQlK2RcluhsNwxmcqXE2YbgoDW735o8TPmIR4uWpoxUERddvFwjgRSGw7gNPCwuvJg==
-{:.example.highlight}
+{:.example}
 
 Authors may choose to specify both, for example:
 
@@ -271,9 +281,9 @@ User agents MUST provide a mechanism of determining the relative priority of two
 hash functions and return the empty string if the priority is equal. That is, if
 a user agent implemented a function like <dfn>getPrioritizedHashFunction(a,
 b)</dfn> it would return the hash function the user agent considers the most
-collision-resistant.  For example, `getPrioritizedHashFunction('SHA-256',
-'SHA-512')` would return `'SHA-512'` and `getPrioritizedHashFunction('SHA-256',
-'SHA-256')` would return the empty string.
+collision-resistant.  For example, `getPrioritizedHashFunction('sha256',
+'sha512')` would return `'sha512'` and `getPrioritizedHashFunction('sha256',
+'sha256')` would return the empty string.
 
 </section><!-- /Framework::Cryptographic hash functions::Priority -->
 
@@ -407,11 +417,11 @@ the user agent.
 #### Does <var>resource</var> match <var>metadataList</var>?
 
 1.  If <var>resource</var>'s URL's scheme is `about`, return `true`.
-2.  If [<var>resource</var> is not eligible for integrity
-    validation][eligible], return `false`.
-3.  Let <var>parsedMetadata</var> be the result of
+2.  Let <var>parsedMetadata</var> be the result of
     [parsing <var>metadataList</var>][parse].
-4.  If <var>parsedMetadata</var> is `no metadata`, return `true`.
+3.  If <var>parsedMetadata</var> is `no metadata`, return `true`.
+4.  If [<var>resource</var> is not eligible for integrity
+    validation][eligible], return `false`.
 5.  Let <var>metadata</var> be the result of [getting the strongest
     metadata from <var>parsedMetadata</var>][get-the-strongest].
 6.  For each <var>item</var> in <var>metadata</var>:
@@ -428,7 +438,7 @@ the user agent.
 This algorithm allows the user agent to accept multiple, valid strong hash
 functions. For example, a developer might write a `script` element such as:
 
-    <script src="https://foobar.com/content-changes.js"
+    <script src="https://example.com/example-framework.js"
             integrity="sha256-C6CB9UYIS9UJeqinPHWTHVqh/E1uhG5Twh+Y5qFQmYg=
                        sha256-qznLcsROx4GACP2dm0UCKCzCG+HiZ1guq6ZZDob/Tng="
             crossorigin="anonymous"></script>
@@ -437,7 +447,7 @@ which would allow the user agent to accept two different content payloads, one
 of which matches the first SHA256 hash value and the other matches the second
 SHA256 hash value.
 
-{:.example.highlight}
+{:.example}
 
 User agents may allow users to modify the result of this algorithm via user
 preferences, bookmarklets, third-party additions to the user agent, and other
@@ -536,11 +546,7 @@ valid metadata as described by the following ABNF grammar:
 
     integrity-metadata = *WSP hash-with-options *( 1*WSP hash-with-options ) *WSP / *WSP
     hash-with-options  = hash-expression *("?" option-expression)
-    option-expression  = option-name "=" option-value
-    option-name        = 1*option-name-char
-    option-name-char   = ALPHA / DIGIT / "-"
-    option-value       = *option-value-char
-    option-value-char  = ALPHA / DIGIT / "!" / "#" / "$" / "%" / "&" / "'" / "*" / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~" / "/"
+    option-expression  = *VCHAR
     hash-algo          = <hash-algo production from [Content Security Policy Level 2, section 4.2]>
     base64-value       = <base64-value production from [Content Security Policy Level 2, section 4.2]>
     hash-expression    = hash-algo "-" base64-value
@@ -552,6 +558,12 @@ applied only to the `hash-expression` that immediately precedes it.
 
 In order for user agents to remain fully forwards compatible with future
 options, the user agent MUST ignore all unrecognized  `option-expression`s
+
+Note that while the `option-expression` has been reserved in the syntax, no
+options have been defined. It is likely that a future version of the spec will
+define a more specific syntax for options, so it is defined here as broadly
+as possible.
+{:.note}
 
 [reflect]: http://www.w3.org/TR/html5/infrastructure.html#reflect
 </section><!-- /Framework::HTML::integrity -->
@@ -598,21 +610,18 @@ failed resource with a different one.
 ###### The `link` element for stylesheets
 
 Whenever a user agent attempts to [obtain a resource][] pointed to by a
-`link` element that has a `rel` attribute with the value of `stylesheet`:
+`link` element that has a `rel` attribute with the value of `stylesheet`,
+insert the following step between steps 1 and 2:
 
 1.  Set the [integrity metadata][] of the request to the value
     of the element's `integrity` attribute.
+{:start="2"}
 
-Additionally, perform the following steps before firing a `load` event at
-the element:
-
-1.  If the response's integrity state is `corrupt`:
-    1.  Abort the `load` event, and treat the resource as having failed
-        to load.
-    2.  [Fire a simple event][] named `error` at the `link` element.
+Additionally, in the paragraph specifying when to fire a `load` event, add
+"response with a `corrupt` integrity state" to the list of load failure
+reasons which are considered network errors.
 
 [obtain a resource]: http://www.w3.org/TR/html5/document-metadata.html#concept-link-obtain
-[same origin]: http://tools.ietf.org/html/rfc6454#section-5
 </section><!-- /Framework::HTML::link -->
 
 <section>
@@ -708,7 +717,7 @@ Moreover, attackers can brute-force specific values in an otherwise
 static resource: consider a JSON response that looks like this:
 
     {'status': 'authenticated', 'username': 'Stephan Falken'}
-{:.example.highlight}
+{:.example}
 
 An attacker can precompute hashes for the response with a variety of
 common usernames, and specify those hashes while repeatedly attempting

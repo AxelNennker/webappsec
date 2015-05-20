@@ -71,7 +71,7 @@
    <h1 class="p-name no-ref" id="title">Credential Management Level 1</h1>
   
    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft
-    <time class="dt-updated" datetime="2015-05-13">13 May 2015</time></span></h2>
+    <time class="dt-updated" datetime="2015-05-20">20 May 2015</time></span></h2>
   
    <div data-fill-with="spec-metadata">
     <dl>
@@ -265,12 +265,10 @@ store user credentials for future use.</p>
     <li><a href="#security-considerations"><span class="secno">6</span> <span class="content">Security Considerations</span></a>
      <ul class="toc">
       <li><a href="#security-cross-origin-leakage"><span class="secno">6.1</span> <span class="content">Cross-origin Credential Leakage</span></a>
-      <li><a href="#security-origin-confusion"><span class="secno">6.2</span> <span class="content">Origin Confusion</span></a>
-      <li><a href="#security-insecure-origins"><span class="secno">6.3</span> <span class="content">Insecure Sites</span></a>
-      <li><a href="#security-xss"><span class="secno">6.4</span> <span class="content">Script Injection</span></a>
-      <li><a href="#security-autocomplete-off"><span class="secno">6.5</span> <span class="content">
-    Avoid reintroducing <code>autocomplete="off"</code>
-  </span></a>
+      <li><a href="#security-same-origin-leakage"><span class="secno">6.2</span> <span class="content">Same-origin Leakage</span></a>
+      <li><a href="#security-origin-confusion"><span class="secno">6.3</span> <span class="content">Origin Confusion</span></a>
+      <li><a href="#security-insecure-origins"><span class="secno">6.4</span> <span class="content">Insecure Sites</span></a>
+      <li><a href="#security-xss"><span class="secno">6.5</span> <span class="content">Script Injection</span></a>
      </ul>
     <li><a href="#privacy-considerations"><span class="secno">7</span> <span class="content">Privacy Considerations</span></a>
      <ul class="toc">
@@ -329,7 +327,7 @@ store user credentials for future use.</p>
   sign-in forms with varying degrees of success.</p>
 
 
-    <p>The <code><a data-link-type="element-attr" href="http://www.w3.org/TR/html5/forms.html#attr-form-autocomplete">autocomplete</a></code> attribute offers a
+    <p>The <code><a data-link-type="element-attr" href="http://www.w3.org/TR/html5/forms.html#autofilling-form-controls:-the-autocomplete-attribute">autocomplete</a></code> attribute offers a
   declarative mechanism by which websites can work with user agents to improve
   the latter’s ability to detect and fill sign-in forms by marking specific
   fields as "username" or "password", and user agents implement a wide variety
@@ -794,7 +792,6 @@ credential.send("https://example.com/sign-in/")
   USVString <dfn class="idl-code" data-dfn-for="CredentialData" data-dfn-type="dict-member" data-export="" data-global-name="CredentialData<dictionary>/iconURL<dict-member>" data-type="USVString " id="dom-credentialdata-iconurl">iconURL<a class="self-link" href="#dom-credentialdata-iconurl"></a></dfn>;
 };
 
-[NoInterfaceObject]
 interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-global-name="" id="credential">Credential<a class="self-link" href="#credential"></a></dfn> {
   readonly attribute DOMString <a class="idl-code" data-global-name="Credential<interface>/id<attribute>" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-credential-id">id</a>;
   readonly attribute DOMString <a class="idl-code" data-global-name="Credential<interface>/type<attribute>" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-credential-type">type</a>;
@@ -851,12 +848,10 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-gl
     <p class="issue" id="issue-43c3f08c"><a class="self-link" href="#issue-43c3f08c"></a>Define cloning algorithms. <a href="https://github.com/w3c/webappsec/issues/287">&lt;https://github.com/w3c/webappsec/issues/287></a></p>
 
   
-    <pre class="idl">[NoInterfaceObject]
-interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-global-name="" id="locallystoredcredential">LocallyStoredCredential<a class="self-link" href="#locallystoredcredential"></a></dfn> {
+    <pre class="idl">interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-global-name="" id="locallystoredcredential">LocallyStoredCredential<a class="self-link" href="#locallystoredcredential"></a></dfn> : <a data-link-type="idl-name" href="#credential">Credential</a> {
   readonly attribute DOMString <a class="idl-code" data-global-name="LocallyStoredCredential<interface>/name<attribute>" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-locallystoredcredential-name">name</a>;
   readonly attribute USVString <a class="idl-code" data-global-name="LocallyStoredCredential<interface>/iconURL<attribute>" data-link-type="attribute" data-readonly="" data-type="USVString " href="#dom-locallystoredcredential-iconurl">iconURL</a>;
 };
-<a data-link-type="idl-name" href="#locallystoredcredential">LocallyStoredCredential</a> implements <a data-link-type="idl-name" href="#credential">Credential</a>;
 </pre>
   
     <dl>
@@ -912,10 +907,9 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-gl
 };
 
 [<dfn class="idl-code" data-dfn-for="PasswordCredential" data-dfn-type="constructor" data-export="" data-global-name="PasswordCredential<interface>/PasswordCredential(data)<constructor>" data-lt="PasswordCredential(data)" id="dom-passwordcredential-passwordcredentialdata">Constructor<a class="self-link" href="#dom-passwordcredential-passwordcredentialdata"></a></dfn>(<a data-link-type="idl-name" href="#dictdef-passwordcredentialdata">PasswordCredentialData</a> <dfn class="idl-code" data-dfn-for="PasswordCredential/PasswordCredential(data)" data-dfn-type="argument" data-export="" data-global-name="PasswordCredential<interface>/PasswordCredential(data)<method>/data<argument>" id="dom-passwordcredential-passwordcredentialdata-data">data<a class="self-link" href="#dom-passwordcredential-passwordcredentialdata-data"></a></dfn>), Exposed=Window]
-interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-global-name="" id="passwordcredential">PasswordCredential<a class="self-link" href="#passwordcredential"></a></dfn> {
+interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-global-name="" id="passwordcredential">PasswordCredential<a class="self-link" href="#passwordcredential"></a></dfn> : <a data-link-type="idl-name" href="#locallystoredcredential">LocallyStoredCredential</a> {
   Promise&lt;<a data-link-type="idl-name" href="https://fetch.spec.whatwg.org/#response">Response</a>> <a class="idl-code" data-global-name="PasswordCredential<interface>/send(url)<method>" data-link-type="method" href="#dom-passwordcredential-sendurl">send</a>(USVString <dfn class="idl-code" data-dfn-for="PasswordCredential/send(url)" data-dfn-type="argument" data-export="" data-global-name="PasswordCredential<interface>/send(url)<method>/url<argument>" id="dom-passwordcredential-sendurl-url">url<a class="self-link" href="#dom-passwordcredential-sendurl-url"></a></dfn>);
 };
-<a data-link-type="idl-name" href="#passwordcredential">PasswordCredential</a> implements <a data-link-type="idl-name" href="#locallystoredcredential">LocallyStoredCredential</a>;
 </pre>
   
     <dl>
@@ -980,11 +974,10 @@ interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-gl
 };
 
 [<dfn class="idl-code" data-dfn-for="FederatedCredential" data-dfn-type="constructor" data-export="" data-global-name="FederatedCredential<interface>/FederatedCredential(data)<constructor>" data-lt="FederatedCredential(data)" id="dom-federatedcredential-federatedcredentialdata">Constructor<a class="self-link" href="#dom-federatedcredential-federatedcredentialdata"></a></dfn>(<a data-link-type="idl-name" href="#dictdef-federatedcredentialdata">FederatedCredentialData</a> <dfn class="idl-code" data-dfn-for="FederatedCredential/FederatedCredential(data)" data-dfn-type="argument" data-export="" data-global-name="FederatedCredential<interface>/FederatedCredential(data)<method>/data<argument>" id="dom-federatedcredential-federatedcredentialdata-data">data<a class="self-link" href="#dom-federatedcredential-federatedcredentialdata-data"></a></dfn>), Exposed=Window]
-interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-global-name="" id="federatedcredential">FederatedCredential<a class="self-link" href="#federatedcredential"></a></dfn> {
+interface <dfn class="idl-code" data-dfn-type="interface" data-export="" data-global-name="" id="federatedcredential">FederatedCredential<a class="self-link" href="#federatedcredential"></a></dfn> : <a data-link-type="idl-name" href="#locallystoredcredential">LocallyStoredCredential</a> {
   readonly attribute USVString <a class="idl-code" data-global-name="FederatedCredential<interface>/provider<attribute>" data-link-type="attribute" data-readonly="" data-type="USVString " href="#dom-federatedcredential-provider">provider</a>;
   readonly attribute DOMString? <a class="idl-code" data-global-name="FederatedCredential<interface>/protocol<attribute>" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-federatedcredential-protocol">protocol</a>;
 };
-<a data-link-type="idl-name" href="#federatedcredential">FederatedCredential</a> implements <a data-link-type="idl-name" href="#locallystoredcredential">LocallyStoredCredential</a>;
 </pre>
   
     <dl>
@@ -1915,8 +1908,8 @@ dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" data-
      <li>
       Execute the initial value of <code class="idl"><a data-link-type="idl" href="https://xhr.spec.whatwg.org/#dom-formdata-append">append()</a></code> on <var>init</var>’s
       <code>body</code> member, with a <code>name</code> of
-      "<code>username</code>", and a <code>value</code> of
-      <var>credential</var>’s <code class="idl"><a data-link-type="idl" href="#dom-passwordcredential-password-slot">[[password]]</a></code> slot.
+      "<code>id</code>", and a <code>value</code> of
+      <var>credential</var>’s <code class="idl"><a data-link-type="idl" href="#dom-credential-id">id</a></code>.
     
      
     
@@ -1935,6 +1928,11 @@ dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" data-
      
   
     </ol>
+
+
+    <p class="issue" id="issue-263ad9b2"><a class="self-link" href="#issue-263ad9b2"></a>The "id" and "password" names need to be
+  configurable. This is wrapped up in the general question of how to present
+  the functionality: via <code>fetch()</code>, or <code>send()</code>. <a href="https://github.com/w3c/webappsec/issues/241">&lt;https://github.com/w3c/webappsec/issues/241></a></p>
 
   
     <h4 class="heading settled" data-level="4.2.5" id="store-locallystoredcredential"><span class="secno">4.2.5. </span><span class="content">
@@ -1965,8 +1963,8 @@ dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" data-
      
     
      <li>
-      Switch on <var>credential</var>’s interface, and execute the associated
-      steps:
+      Switch on <var>credential</var>’s primary interface, and execute the
+      associated steps:
 
       
       <dl>
@@ -2534,7 +2532,7 @@ dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" data-
       MUST NOT share credentials between origins whose scheme components are
       not the same. That is: credentials saved on
       <code>https://example.com/</code> will never be available to
-      <code>http://example.com/</code> via <code class="idl"><a data-link-type="idl" href="#dom-credentialcontainer-getrequest">get()</a></code>
+      <code>http://example.com/</code> via a user agent’s autofill mechanism
     
      
     
@@ -2595,7 +2593,20 @@ dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" data-
     </ol>
 
   
-    <h3 class="heading settled" data-level="6.2" id="security-origin-confusion"><span class="secno">6.2. </span><span class="content">Origin Confusion</span><a class="self-link" href="#security-origin-confusion"></a></h3>
+    <h3 class="heading settled" data-level="6.2" id="security-same-origin-leakage"><span class="secno">6.2. </span><span class="content">Same-origin Leakage</span><a class="self-link" href="#security-same-origin-leakage"></a></h3>
+
+
+    <p>Cross-site scripting attacks could make it possible to exploit <code class="idl"><a data-link-type="idl" href="#dom-passwordcredential-sendurl">send()</a></code> in
+  order to leak credential information via a vulnerable same-origin endpoint.
+  To mitigate this kind of risk, authors SHOULD set a reasonable Content
+  Security Policy <a data-link-type="biblio" href="#biblio-csp2">[CSP2]</a> which restricts the kinds of content which can
+  execute in their sites' context. In particular, authors should ensure that
+  both <code><a data-link-type="dfn" href="https://w3c.github.io/webappsec/specs/content-security-policy/#directive-script-src">script-src</a></code> and <code><a data-link-type="dfn" href="https://w3c.github.io/webappsec/specs/content-security-policy/#directive-object-src">object-src</a></code>
+  directives are set in any policy they specify in order to ensure that only
+  trusted script is executed on a page with access to a user’s credentials.</p>
+
+  
+    <h3 class="heading settled" data-level="6.3" id="security-origin-confusion"><span class="secno">6.3. </span><span class="content">Origin Confusion</span><a class="self-link" href="#security-origin-confusion"></a></h3>
 
 
     <p>If framed pages have access to the APIs defined here, it might be possible
@@ -2619,18 +2630,19 @@ dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" data-
   for details.</p>
 
   
-    <h3 class="heading settled" data-level="6.3" id="security-insecure-origins"><span class="secno">6.3. </span><span class="content">Insecure Sites</span><a class="self-link" href="#security-insecure-origins"></a></h3>
+    <h3 class="heading settled" data-level="6.4" id="security-insecure-origins"><span class="secno">6.4. </span><span class="content">Insecure Sites</span><a class="self-link" href="#security-insecure-origins"></a></h3>
 
 
-    <p>User agents MUST NOT expose credential information via the APIs defined here
-  to environments which are not <a data-link-type="dfn" href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#privileged-context">privileged contexts</a>. User agents MAY
-  implement autofill mechanisms which store user credentials and fill sign-in
-  forms on <a data-link-type="dfn" href="https://w3c.github.io/webappsec/specs/mixedcontent/#a-priori-insecure-origin"><i lang="la">a priori</i> insecure origins</a>, but those
-  sites cannot be trusted to interact directly with the credential manager in
-  any meaningful way.</p>
+    <p>User agents MUST NOT expose the APIs defined here to environments which are
+  not <a data-link-type="dfn" href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#privileged-context">privileged contexts</a>. User agents MAY implement autofill mechanisms
+  which store user credentials and fill sign-in forms on
+  <a data-link-type="dfn" href="https://w3c.github.io/webappsec/specs/mixedcontent/#a-priori-insecure-origin"><i lang="la">a priori</i> insecure origins</a>, but those sites cannot be
+  trusted to interact directly with the credential manager in any meaningful way,
+  and those sites MUST NOT have access to credentials saved in <a data-link-type="dfn" href="https://w3c.github.io/webappsec/specs/powerfulfeatures/#privileged-context">privileged
+  contexts</a> (as discussed in <a href="#security-cross-origin-leakage">§6.1 Cross-origin Credential Leakage</a>.</p>
 
   
-    <h3 class="heading settled" data-level="6.4" id="security-xss"><span class="secno">6.4. </span><span class="content">Script Injection</span><a class="self-link" href="#security-xss"></a></h3>
+    <h3 class="heading settled" data-level="6.5" id="security-xss"><span class="secno">6.5. </span><span class="content">Script Injection</span><a class="self-link" href="#security-xss"></a></h3>
 
 
     <p>If a malicious party is able to inject script into an origin, they could
@@ -2644,19 +2656,6 @@ dictionary <dfn class="idl-code" data-dfn-type="dictionary" data-export="" data-
   strong Content Security Policy <a data-link-type="biblio" href="#biblio-csp2">[CSP2]</a> which restricts the origins from
   which script can be injected, and by using Subresource Integrity checks
   <a data-link-type="biblio" href="#biblio-sri">[SRI]</a> to ensure that only trusted JavaScript is executed.</p>
-
-  
-    <h3 class="heading settled" data-level="6.5" id="security-autocomplete-off"><span class="secno">6.5. </span><span class="content">
-    Avoid reintroducing <code>autocomplete="off"</code>
-  </span><a class="self-link" href="#security-autocomplete-off"></a></h3>
-
-
-    <p>Some user agents have decided not to implement the
-  <a data-link-type="element-attr" href="http://www.w3.org/TR/html5/forms.html#attr-form-autocomplete">autocomplete</a> attribute in such a way as to
-  prevent users from saving credentials. The APIs defined here SHOULD be
-  implemented such that they don’t provide an automatic way of bypassing that
-  decision. Some of the requirements in <a href="#user-mediated-storage">§5.1 Storing and Updating Credentials</a> are in place
-  for exactly this reason.</p>
 </section>
 
 
@@ -3041,6 +3040,8 @@ typedef (FederatedCredentialRequestOptions or ExampleCredentialRequestOptions) C
     <ul>
      <li><a href="https://w3c.github.io/webappsec/specs/content-security-policy/#directive-child-src">child-src</a>
      <li><a href="https://w3c.github.io/webappsec/specs/content-security-policy/#directive-connect-src">connect-src</a>
+     <li><a href="https://w3c.github.io/webappsec/specs/content-security-policy/#directive-object-src">object-src</a>
+     <li><a href="https://w3c.github.io/webappsec/specs/content-security-policy/#directive-script-src">script-src</a>
     </ul>
    <li><a data-link-type="biblio" href="#biblio-fetch">[FETCH]</a> defines the following terms:
     <ul>
@@ -3054,7 +3055,7 @@ typedef (FederatedCredentialRequestOptions or ExampleCredentialRequestOptions) C
      <li><a href="http://www.w3.org/TR/html5/infrastructure.html#transferable">Transferable</a>
      <li><a href="http://www.w3.org/TR/html5/browsers.html#active-document">active document</a>
      <li><a href="http://www.w3.org/TR/html5/browsers.html#allowed-to-show-a-popup">allowed to show a popup</a>
-     <li><a href="http://www.w3.org/TR/html5/forms.html#attr-form-autocomplete">autocomplete</a>
+     <li><a href="http://www.w3.org/TR/html5/forms.html#autofilling-form-controls:-the-autocomplete-attribute">autocomplete</a>
      <li><a href="http://www.w3.org/TR/html5/webappapis.html#incumbent-settings-object">incumbent settings object</a>
      <li><a href="http://www.w3.org/TR/html5/browsers.html#nested-browsing-context">nested browsing context</a>
      <li><a href="http://www.w3.org/TR/html5/webappapis.html#responsible-browsing-context">responsible browsing context</a>
@@ -3153,29 +3154,25 @@ typedef (FederatedCredentialRequestOptions or ExampleCredentialRequestOptions) C
   USVString <a data-global-name="CredentialData<dictionary>/iconURL<dict-member>" data-type="USVString " href="#dom-credentialdata-iconurl">iconURL</a>;
 };
 
-[NoInterfaceObject]
 interface <a data-global-name="" href="#credential">Credential</a> {
   readonly attribute DOMString <a class="idl-code" data-global-name="Credential<interface>/id<attribute>" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-credential-id">id</a>;
   readonly attribute DOMString <a class="idl-code" data-global-name="Credential<interface>/type<attribute>" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-credential-type">type</a>;
 };
 <a data-link-type="idl-name" href="#credential">Credential</a> implements <a data-link-type="idl-name" href="http://www.w3.org/TR/html5/infrastructure.html#transferable">Transferable</a>;
 
-[NoInterfaceObject]
-interface <a data-global-name="" href="#locallystoredcredential">LocallyStoredCredential</a> {
+interface <a data-global-name="" href="#locallystoredcredential">LocallyStoredCredential</a> : <a data-link-type="idl-name" href="#credential">Credential</a> {
   readonly attribute DOMString <a class="idl-code" data-global-name="LocallyStoredCredential<interface>/name<attribute>" data-link-type="attribute" data-readonly="" data-type="DOMString " href="#dom-locallystoredcredential-name">name</a>;
   readonly attribute USVString <a class="idl-code" data-global-name="LocallyStoredCredential<interface>/iconURL<attribute>" data-link-type="attribute" data-readonly="" data-type="USVString " href="#dom-locallystoredcredential-iconurl">iconURL</a>;
 };
-<a data-link-type="idl-name" href="#locallystoredcredential">LocallyStoredCredential</a> implements <a data-link-type="idl-name" href="#credential">Credential</a>;
 
 dictionary <a data-global-name="" href="#dictdef-passwordcredentialdata">PasswordCredentialData</a> : <a data-link-type="idl-name" href="#dictdef-credentialdata">CredentialData</a> {
   DOMString <a data-global-name="PasswordCredentialData<dictionary>/password<dict-member>" data-type="DOMString " href="#dom-passwordcredentialdata-password">password</a>;
 };
 
 [<a data-global-name="PasswordCredential<interface>/PasswordCredential(data)<constructor>" href="#dom-passwordcredential-passwordcredentialdata">Constructor</a>(<a data-link-type="idl-name" href="#dictdef-passwordcredentialdata">PasswordCredentialData</a> <a data-global-name="PasswordCredential<interface>/PasswordCredential(data)<method>/data<argument>" href="#dom-passwordcredential-passwordcredentialdata-data">data</a>), Exposed=Window]
-interface <a data-global-name="" href="#passwordcredential">PasswordCredential</a> {
+interface <a data-global-name="" href="#passwordcredential">PasswordCredential</a> : <a data-link-type="idl-name" href="#locallystoredcredential">LocallyStoredCredential</a> {
   Promise&lt;<a data-link-type="idl-name" href="https://fetch.spec.whatwg.org/#response">Response</a>> <a class="idl-code" data-global-name="PasswordCredential<interface>/send(url)<method>" data-link-type="method" href="#dom-passwordcredential-sendurl">send</a>(USVString <a data-global-name="PasswordCredential<interface>/send(url)<method>/url<argument>" href="#dom-passwordcredential-sendurl-url">url</a>);
 };
-<a data-link-type="idl-name" href="#passwordcredential">PasswordCredential</a> implements <a data-link-type="idl-name" href="#locallystoredcredential">LocallyStoredCredential</a>;
 
 dictionary <a data-global-name="" href="#dictdef-federatedcredentialdata">FederatedCredentialData</a> : <a data-link-type="idl-name" href="#dictdef-credentialdata">CredentialData</a> {
   USVString <a data-global-name="FederatedCredentialData<dictionary>/provider<dict-member>" data-type="USVString " href="#dom-federatedcredentialdata-provider">provider</a>;
@@ -3183,11 +3180,10 @@ dictionary <a data-global-name="" href="#dictdef-federatedcredentialdata">Federa
 };
 
 [<a data-global-name="FederatedCredential<interface>/FederatedCredential(data)<constructor>" href="#dom-federatedcredential-federatedcredentialdata">Constructor</a>(<a data-link-type="idl-name" href="#dictdef-federatedcredentialdata">FederatedCredentialData</a> <a data-global-name="FederatedCredential<interface>/FederatedCredential(data)<method>/data<argument>" href="#dom-federatedcredential-federatedcredentialdata-data">data</a>), Exposed=Window]
-interface <a data-global-name="" href="#federatedcredential">FederatedCredential</a> {
+interface <a data-global-name="" href="#federatedcredential">FederatedCredential</a> : <a data-link-type="idl-name" href="#locallystoredcredential">LocallyStoredCredential</a> {
   readonly attribute USVString <a class="idl-code" data-global-name="FederatedCredential<interface>/provider<attribute>" data-link-type="attribute" data-readonly="" data-type="USVString " href="#dom-federatedcredential-provider">provider</a>;
   readonly attribute DOMString? <a class="idl-code" data-global-name="FederatedCredential<interface>/protocol<attribute>" data-link-type="attribute" data-readonly="" data-type="DOMString? " href="#dom-federatedcredential-protocol">protocol</a>;
 };
-<a data-link-type="idl-name" href="#federatedcredential">FederatedCredential</a> implements <a data-link-type="idl-name" href="#locallystoredcredential">LocallyStoredCredential</a>;
 
 partial interface <a class="idl-code" data-link-type="interface" href="http://www.w3.org/TR/html5/webappapis.html#navigator">Navigator</a> {
   readonly attribute <a data-link-type="idl-name" href="#credentialcontainer">CredentialContainer</a> <a data-global-name="Navigator<interface>/credentials<attribute>" data-readonly="" data-type="CredentialContainer " href="#dom-navigator-credentials">credentials</a>;
@@ -3239,6 +3235,9 @@ dictionary <a data-global-name="" href="#dictdef-credentialrequest">CredentialRe
   seems like something we’d want to fix. <a href="https://github.com/w3c/webappsec/issues/256">&lt;https://github.com/w3c/webappsec/issues/256></a><a href="#issue-d98444f7"> ↵ </a></div>
    <div class="issue">Should we introduce a new Fetch context?
       <code>credential</code> or something? <a href="https://github.com/w3c/webappsec/issues/231">&lt;https://github.com/w3c/webappsec/issues/231></a><a href="#issue-b97befdf"> ↵ </a></div>
+   <div class="issue">The "id" and "password" names need to be
+  configurable. This is wrapped up in the general question of how to present
+  the functionality: via <code>fetch()</code>, or <code>send()</code>. <a href="https://github.com/w3c/webappsec/issues/241">&lt;https://github.com/w3c/webappsec/issues/241></a><a href="#issue-263ad9b2"> ↵ </a></div>
    <div class="issue">Add some thoughts here about when and how the API
   should be used, especially with regard to <code class="idl"><a data-link-type="idl" href="#dom-credentialrequest-suppressui">suppressUI</a></code>. <a href="https://github.com/w3c/webappsec/issues/290">&lt;https://github.com/w3c/webappsec/issues/290></a><a href="#issue-0bebb85f"> ↵ </a></div>
    <div class="issue">
